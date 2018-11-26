@@ -1,0 +1,66 @@
+baseURL = "http://schmitty.me/"
+languageCode = "en-us"
+title = "Cory Schmitt"
+theme = "hugo-coder-portfolio"
+defaultcontentlanguage = "end"
+
+paginate = 20
+
+pygmentsstyle = "b2" # Color-theme or style for syntax highlighting.
+pygmentscodefences = true # Enable code fence background highlighting.
+pygmentscodefencesguesssyntax = true # Enable syntax guessing for code fences without specified language.
+pygmentsUseClasses = true # new add
+
+[params] # theme parameters
+    author = "Cory Schmitt" # Author's name.
+    info = "SOFTWARE ENGINEER" # Author's job title or info.
+    description = "Cory Schmitt's personal website" # Site description.
+    keywords = "blog,developer,personal" # Site keywords.
+    avatarurl = "images/avatar.jpg" # Contain the path of the optionnal avatar in the static folder.
+
+    fixedbarContent = "Contact Me -> " # Add fixedbar content
+    fixedbarContentAfter = "cory[at]schmitty.me" # Add fixedbar content after click
+
+    # Whether you want to hide copyright and credits in the footer.
+    hideCredits = true 
+    hideCopyright = true 
+
+    # Custom CSS
+    custom_css = []
+
+    # Alignment of Mobile Menu items
+    itemscentered = true
+
+    # RTL support
+    rtl = false
+
+    snsShare = false # new add
+
+    thumbnail = "images/tn.png" # default sns thumbnail
+
+    # Multilanguage mode
+    langseparator = "|" # Separates menus from language selectors when site is multilingual.
+
+# Social links
+[[params.social]]
+    name = "Github"
+    weight = 1
+    url = "https://github.com/cas27/"
+[[params.social]]
+    name = "Twitter"
+    weight = 2
+    url = "https://twitter.com/_GazD/"
+[[params.social]]
+    name = "LinkedIn"
+    weight = 3
+    url = "https://www.linkedin.com/in/coryschmitt/"
+
+# Menu links
+[[menu.main]]
+    name = "Blog"
+    weight = 1
+    url  = "posts"
+[[menu.main]]
+    name = "About"
+    weight = 2
+    url = "about"
