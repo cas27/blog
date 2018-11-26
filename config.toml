@@ -1,4 +1,4 @@
-baseURL = "http://schmitty.me/"
+baseURL = "https://schmitty.me/"
 languageCode = "en-us"
 title = "Cory Schmitt"
 theme = "hugo-coder-portfolio"
