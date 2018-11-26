@@ -1,5 +1,5 @@
 +++ 
-draft = true
+draft = false
 date = 2018-11-25T13:58:02-08:00
 title = "How to Behave and Why"
 slug = "how-to-behave-and-why" 
