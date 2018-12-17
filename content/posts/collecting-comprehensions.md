@@ -1,8 +1,8 @@
 +++ 
-draft = true
+draft = false
 date = 2018-12-16T09:15:32-08:00
-title = ""
-slug = "" 
+title = "Collecting Comprehensions"
+slug = "collecting-comprehensions-in-elixir" 
 tags = ["elixir"]
 categories = ["elixir"]
 thumbnail = "images/tn.png"
@@ -13,7 +13,7 @@ Comprehensions are an elegant way to loop through enumerables, and are especiall
 
 Let's walk through doing just that.
 
-```
+```elixir
   @data [
     %{
       1 => [
@@ -62,19 +62,19 @@ Let's walk through doing just that.
   ]
 ```
 
-Here is the data structure we are going to use.  We've got a list of users, who have lists of receipts, which each have a list of line items. Let's say we want to find number of line items who shipped to "NJ", total amount was > 100, and the total sum for all their amounts. 
+Here is the data structure we are going to use.  We've got a list of users, who have lists of receipts, which each have a list of line items. Let's say we want to find the number of line items who shipped to "NJ", total amount was > 100, and the total sum for all their amounts. 
 
-Let's write a comprehension that collects all the line items that meet the above criteria
+Let's write a comprehension that collects all the line items that meets the above criteria
 
 ```elixir
-    for user <- @data, # grab a single user
-        {_user_id, receipts} <- user, # get that users receipts
-        receipt <- receipts, # look at a single receipt
-        {_receipt_id, %{line_items: line_items}} <- receipt, # get the line items from that receipt
-        %{to_state: "NJ", unit_price: price, quantity: qty} when price * qty > 100 <- line_items, # filter
-        do: (price * qty) #collect
+for user <- @data, # grab a single user
+    {_user_id, receipts} <- user, # get that users receipts
+    receipt <- receipts, # look at a single receipt
+    {_receipt_id, %{line_items: line_items}} <- receipt, # get the line items from that receipt
+    %{to_state: "NJ", unit_price: price, quantity: qty} when price * qty > 100 <- line_items, # filter
+    do: (price * qty) #collect
 
-        #=> [202, 603]
+    #=> [202, 603]
 ```
 
 In just 6 lines of code we were able to iterate through all the users, all their receipts, all their line items and use a combination of pattern matching and guards to filter for the exact data we wanted.  Well not quite.  We still need to sum all the totals and count the number of line items we found.
@@ -83,41 +83,41 @@ We could Enum.reduce this returned data and get the last 2 answers we want but t
 
 Now lets implement the Collectable that would help us avoid these 2 issues.
 
-```
-  defmodule Report do
-    defstruct count: 0, total_sales: 0
+```elixir
+defmodule Report do
+  defstruct count: 0, total_sales: 0
 
-    def update(report, total) do
-      %{count: count, total_sales: total_sales} = report
-      %{report | count: count + 1, total_sales: total_sales + total}
-    end
+  def update(report, total) do
+    %{count: count, total_sales: total_sales} = report
+    %{report | count: count + 1, total_sales: total_sales + total}
+  end
 
-    defimpl Collectable do
-      def into(original) do
-        collector_fun = fn
-          report, {:cont, total} -> Report.update(report, total)
-          report, :done -> report 
-          _report, :halt -> :ok
-        end
-    
-        {original, collector_fun}
+  defimpl Collectable do
+    def into(original) do
+      collector_fun = fn
+        report, {:cont, total} -> Report.update(report, total)
+        report, :done -> report 
+        _report, :halt -> :ok
       end
+  
+      {original, collector_fun}
     end
   end
+end
 ```
 
 Here we've created a Report data structure to keep track of our count and total sales.  We've implemented the Collectable protocol by handling the 3 enumerable tags (more on these in a bit) it requires.  Finally we added a simple update function that will update the data points that we care about.  All thats left is to tell our comprehension to use this.
 
-```
-    for user <- @data, # grab a single user
-        {_user_id, receipts} <- user, # get that users receipts
-        receipt <- receipts, # look at a single receipt
-        {_receipt_id, %{line_items: line_items}} <- receipt, # get the line items from that receipt
-        %{to_state: "NJ", unit_price: price, quantity: qty} when price * qty > 100 <- line_items, # filter
-        into: %Report{},
-        do: (price * qty) #collect
+```elixir
+for user <- @data, # grab a single user
+    {_user_id, receipts} <- user, # get that users receipts
+    receipt <- receipts, # look at a single receipt
+    {_receipt_id, %{line_items: line_items}} <- receipt, # get the line items from that receipt
+    %{to_state: "NJ", unit_price: price, quantity: qty} when price * qty > 100 <- line_items, # filter
+    into: %Report{},
+    do: (price * qty) #collect
 
-        #=> %Sales.Report{count: 2, total_sales: 805} 
+    #=> %Sales.Report{count: 2, total_sales: 805} 
 ```
 
 It's as simple as that!
