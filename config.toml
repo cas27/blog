@@ -57,6 +57,10 @@ pygmentsUseClasses = true # new add
 
 # Menu links
 [[menu.main]]
+    name = "RSS"
+    weight = 1
+    url  = "index.xml"
+[[menu.main]]
     name = "Blog"
     weight = 1
     url  = "posts"
